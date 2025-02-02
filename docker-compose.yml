@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=db_nuksaf
+      - POSTGRES_USER=nuksaf
+      - POSTGRES_PASSWORD=123456
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    name: nuksaf_postgres_data_new
