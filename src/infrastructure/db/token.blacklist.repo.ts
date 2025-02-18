@@ -1,11 +1,11 @@
-import { Prisma, type PrismaClient } from "@prisma/client";
-
 import "reflect-metadata";
+
+import { Prisma, type PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
-import { TYPES } from "../entity/types";
 
 import { DBError, NotFoundError } from "../entity/error";
 import type { ITokenBlacklist } from "../entity/interface";
+import { TYPES } from "../entity/types";
 
 @injectable()
 export class TokenBlacklistRepository implements ITokenBlacklist {
