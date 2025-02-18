@@ -1,5 +1,5 @@
 {
-	"name": "be-nuksaf",
+	"name": "auth-elysiajs",
 	"version": "1.0.50",
 	"scripts": {
 		"format": "bunx biome format src/ --fix",
