@@ -8,9 +8,16 @@
 		"prepare": "husky"
 	},
 	"dependencies": {
+		"@elysiajs/cookie": "^0.8.0",
+		"@elysiajs/cors": "^1.2.0",
+		"@elysiajs/jwt": "^1.2.0",
+		"@elysiajs/swagger": "^1.2.0",
 		"@prisma/client": "^6.3.0",
 		"elysia": "latest",
-		"prisma": "^6.3.0"
+		"inversify": "^6.2.2",
+		"prisma": "^6.3.0",
+		"reflect-metadata": "^0.2.2",
+		"resend": "^4.1.1"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",

@@ -1,28 +1,24 @@
-// Import library dan dependencies yang dibutuhkan
-import { Container } from "inversify";
-import { TYPES } from "../infrastructure/entity/types";
 import { PrismaClient } from "@prisma/client";
-import { UserRepository } from "../infrastructure/db/userRepo";
-import { SessionRepository } from "../infrastructure/db/sessionRepo";
-import { NoteRepository } from "../infrastructure/db/noteRepo";
-import { AuthServices } from "./services/authServices";
-import { NoteServices } from "./services/noteServices";
+import { Container } from "inversify";
+import { OtpRepository } from "../infrastructure/db/otp.repo";
+import { TokenBlacklistRepository } from "../infrastructure/db/token.blacklist.repo";
+import { UserRepository } from "../infrastructure/db/user.repo";
+import { TYPES } from "../infrastructure/entity/types";
+import { EmailServices } from "./communications/mail/mail.services";
+import { JWTProvider } from "./security/jwt/jwt.provider";
 
-// Membuat container inversify baru
+import { AuthServices } from "./services/auth.services";
+
 const container = new Container();
 
-// Mendaftarkan PrismaClient sebagai singleton
 container.bind(TYPES.prisma).toConstantValue(new PrismaClient());
 
-// Mendaftarkan repository ke container
-container.bind(TYPES.userRepo).to(UserRepository); // Repository untuk user
-container.bind(TYPES.sessionRepo).to(SessionRepository); // Repository untuk session
-container.bind(TYPES.noteRepo).to(NoteRepository); // Repository untuk note
+container.bind(TYPES.userRepo).to(UserRepository);
+container.bind(TYPES.otpRepo).to(OtpRepository);
+container.bind(TYPES.emailServices).to(EmailServices);
+container.bind(TYPES.jwt).to(JWTProvider);
+container.bind(TYPES.tokenBlacklist).to(TokenBlacklistRepository);
 
-// Mendaftarkan services ke container
-container.bind(AuthServices).toSelf(); // Service untuk autentikasi
-container.bind(NoteServices).toSelf(); // Service untuk mengelola note
+container.bind(AuthServices).toSelf();
 
-// Membuat instance services yang sudah diinjeksi dependensinya
-export const authServices = container.get<AuthServices>(AuthServices); // Instance AuthServices
-export const noteServices = container.get<NoteServices>(NoteServices); // Instance NoteServices
+export const authServices = container.get<AuthServices>(AuthServices);
