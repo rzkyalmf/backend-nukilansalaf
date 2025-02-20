@@ -9,6 +9,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 			try {
 				const result = await authServices.registerUser(
 					body.name,
+					body.username,
 					body.email,
 					body.phone,
 					body.password,
@@ -28,6 +29,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 		{
 			body: t.Object({
 				name: t.String({ minLength: 3 }),
+				username: t.String({ minLength: 3 }),
 				email: t.String({ format: "email" }),
 				phone: t.String({ minLength: 8 }),
 				password: t.String({ minLength: 8 }),

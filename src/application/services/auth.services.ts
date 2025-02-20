@@ -29,6 +29,7 @@ export class AuthServices {
 
 	async registerUser(
 		name: string,
+		username: string,
 		email: string,
 		phone: string,
 		password: string,
@@ -37,9 +38,17 @@ export class AuthServices {
 			const user = await this.userRepo.getOne(email);
 
 			if (!user.isVerified) {
+				const isUserExist = await this.userRepo.findByUsername(username);
+
+				if (isUserExist && user.username !== username) {
+					throw new AutorizationError("Username already exists");
+				}
+
 				const hashedPassword = await Bun.password.hash(password);
+
 				const updatedUser = await this.userRepo.update(user.id, {
 					name,
+					username,
 					phone,
 					password: hashedPassword,
 					avatar: "",
@@ -53,6 +62,7 @@ export class AuthServices {
 
 				const token = await this.jwt.sign({
 					id: updatedUser.id,
+					username: updatedUser.username,
 					email: updatedUser.email,
 					name: updatedUser.name,
 					role: updatedUser.role,
@@ -64,12 +74,19 @@ export class AuthServices {
 				return token;
 			}
 
-			throw new AutorizationError("User already exists");
+			throw new AutorizationError("Email User already exists");
 		} catch (error) {
 			if (error instanceof NotFoundError) {
+				const isUserExist = await this.userRepo.findByUsername(username);
+
+				if (isUserExist) {
+					throw new AutorizationError("Username already exists");
+				}
+
 				const hashedPassword = await Bun.password.hash(password);
 				const newUser = await this.userRepo.create({
 					name,
+					username,
 					email,
 					phone,
 					password: hashedPassword,
@@ -81,6 +98,7 @@ export class AuthServices {
 
 				const token = await this.jwt.sign({
 					id: newUser.id,
+					username: newUser.username,
 					email: newUser.email,
 					name: newUser.name,
 					role: newUser.role,
@@ -153,6 +171,7 @@ export class AuthServices {
 
 			const token = await this.jwt.sign({
 				id: user.id,
+				username: user.username,
 				email: user.email,
 				name: user.name,
 				role: user.role,
@@ -228,6 +247,7 @@ export class AuthServices {
 
 			const token = await this.jwt.sign({
 				id: user.id,
+				username: user.username,
 				email: user.email,
 				name: user.name,
 				role: user.role,
@@ -259,6 +279,7 @@ export class AuthServices {
 
 			const newToken = await this.jwt.sign({
 				id: user.id,
+				username: user.username,
 				email: user.email,
 				name: user.name,
 				role: user.role,

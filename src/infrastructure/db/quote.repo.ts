@@ -3,19 +3,23 @@ import "reflect-metadata";
 import { Prisma, type PrismaClient } from "@prisma/client";
 import { inject, injectable } from "inversify";
 
+import { TYPES } from "../../infrastructure/entity/types";
 import { DBError, NotFoundError } from "../entity/error";
-import type { CreateUser, IUser, UpdateUser } from "../entity/interface";
-import { TYPES } from "../entity/types";
+import type { CreateQuote, UpdateQuote } from "../entity/interface";
 
 @injectable()
-export class UserRepository implements IUser {
+export class QuoteRepository {
 	constructor(@inject(TYPES.prisma) private prisma: PrismaClient) {}
 
-	async getAll() {
+	async getAll(userId: string) {
 		try {
-			const users = await this.prisma.user.findMany();
+			const quotes = await this.prisma.quote.findMany({
+				where: {
+					userId,
+				},
+			});
 
-			return users;
+			return quotes;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
 				throw new DBError("Error getting resources from DB");
@@ -25,29 +29,26 @@ export class UserRepository implements IUser {
 		}
 	}
 
-	async getOne(userIdOrEmail: string) {
+	async getOne(idOrUserId: string) {
 		try {
-			const user = await this.prisma.user.findFirst({
+			const quote = await this.prisma.quote.findFirst({
 				where: {
 					OR: [
 						{
-							id: userIdOrEmail,
+							id: idOrUserId,
 						},
 						{
-							email: userIdOrEmail,
-						},
-						{
-							username: userIdOrEmail,
+							userId: idOrUserId,
 						},
 					],
 				},
 			});
 
-			if (!user) {
-				throw new NotFoundError("User not found");
+			if (!quote) {
+				throw new NotFoundError("Data not found");
 			}
 
-			return user;
+			return quote;
 		} catch (error) {
 			if (error instanceof NotFoundError) {
 				throw error;
@@ -56,32 +57,32 @@ export class UserRepository implements IUser {
 		}
 	}
 
-	async create(data: CreateUser) {
+	async create(data: CreateQuote) {
 		try {
-			const newUser = await this.prisma.user.create({
+			const newQuote = await this.prisma.quote.create({
 				data,
 			});
 
-			return newUser;
+			return newQuote;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
-				throw new DBError("Error getting resources from DB");
+				throw new DBError("Error getting resources from DBs");
 			}
 
 			throw new DBError("something went wrong while doing DB Operation");
 		}
 	}
 
-	async update(userId: string, data: UpdateUser) {
+	async update(quoteId: string, data: UpdateQuote) {
 		try {
-			const updatedUser = await this.prisma.user.update({
+			const updatedQuote = await this.prisma.quote.update({
 				where: {
-					id: userId,
+					id: quoteId,
 				},
 				data,
 			});
 
-			return updatedUser;
+			return updatedQuote;
 		} catch (error) {
 			if (error instanceof Prisma.PrismaClientKnownRequestError) {
 				throw new DBError("Error getting resources from DB");
@@ -91,11 +92,11 @@ export class UserRepository implements IUser {
 		}
 	}
 
-	async delete(userId: string) {
+	async delete(quoteId: string) {
 		try {
-			await this.prisma.user.delete({
+			await this.prisma.quote.delete({
 				where: {
-					id: userId,
+					id: quoteId,
 				},
 			});
 		} catch (error) {
@@ -104,20 +105,6 @@ export class UserRepository implements IUser {
 			}
 
 			throw new DBError("something went wrong while doing DB Operation");
-		}
-	}
-
-	async findByUsername(username: string) {
-		try {
-			const user = await this.prisma.user.findUnique({
-				where: {
-					username: username,
-				},
-			});
-
-			return !!user;
-		} catch (error) {
-			throw new DBError("Database error");
 		}
 	}
 }

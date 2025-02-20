@@ -1,14 +1,14 @@
-import { error } from "node:console";
 import { jwt } from "@elysiajs/jwt";
 import { Elysia } from "elysia";
 import { injectable } from "inversify";
+import { error } from "node:console";
 import { JWTError } from "./errors/jwt.error";
 import type { IJWT, JWTPayload } from "./interfaces/jwt.interface";
 
 @injectable()
 export class JWTProvider implements IJWT {
-	private authVerificationHandler;
-	private authSessionHandler;
+	private shortTermHandler;
+	private longTermHandler;
 
 	constructor() {
 		if (!process.env.JWT_SECRET) {
@@ -17,29 +17,29 @@ export class JWTProvider implements IJWT {
 
 		const app = new Elysia();
 
-		this.authVerificationHandler = app.use(
+		this.shortTermHandler = app.use(
 			jwt({
-				name: "jwt",
+				name: "shortTermJwt",
 				secret: process.env.JWT_SECRET,
-				exp: "1h",
+				exp: "1m",
 			}),
-		).decorator.jwt;
+		).decorator.shortTermJwt;
 
-		this.authSessionHandler = app.use(
+		this.longTermHandler = app.use(
 			jwt({
-				name: "jwt",
+				name: "longTermJwt",
 				secret: process.env.JWT_SECRET,
 				exp: "7d",
 			}),
-		).decorator.jwt;
+		).decorator.longTermJwt;
 	}
 
 	async sign(payload: JWTPayload) {
 		try {
-			if (payload.type === "login") {
-				return await this.authSessionHandler.sign(payload);
-			}
-			return await this.authVerificationHandler.sign(payload);
+			const handler =
+				payload.type === "login" ? this.longTermHandler : this.shortTermHandler;
+
+			return await handler.sign(payload);
 		} catch (error) {
 			throw new JWTError("Error signing JWT");
 		}
@@ -47,7 +47,9 @@ export class JWTProvider implements IJWT {
 
 	async verify(token: string) {
 		try {
-			const result = await this.authVerificationHandler.verify(token);
+			const result =
+				(await this.longTermHandler.verify(token)) ||
+				(await this.shortTermHandler.verify(token));
 
 			if (!result) {
 				throw error;

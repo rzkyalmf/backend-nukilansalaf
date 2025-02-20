@@ -1,5 +1,5 @@
 {
-	"name": "auth-elysiajs",
+	"name": "backend-nukilansalaf",
 	"version": "1.0.50",
 	"scripts": {
 		"format": "bunx biome format src/ --fix",

@@ -16,7 +16,8 @@ model User {
   id String @id @default(cuid())
 
   name String
-  email String
+  username String @unique
+  email String @unique
   phone String
   password String
   avatar String?
@@ -29,11 +30,12 @@ model User {
   updatedAt DateTime @updatedAt
 
   codeOtp CodeOtp?
+  quote Quote[]
 }
 
 model TokenBlacklist {
-  id        String   @id @default(cuid())
-  token     String   @unique
+  id String   @id @default(cuid())
+  token String   @unique
   expiredAt DateTime
   createdAt DateTime @default(now())
 }
@@ -43,6 +45,20 @@ model CodeOtp {
   code String
 
   userId String @unique
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Quote {
+  id String @id @default(cuid())
+  title String
+  speaker String
+  content String
+  source String
+  description String
+
+  userId String
   user User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
