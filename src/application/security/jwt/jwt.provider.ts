@@ -21,7 +21,7 @@ export class JWTProvider implements IJWT {
 			jwt({
 				name: "shortTermJwt",
 				secret: process.env.JWT_SECRET,
-				exp: "1m",
+				exp: "1d",
 			}),
 		).decorator.shortTermJwt;
 
