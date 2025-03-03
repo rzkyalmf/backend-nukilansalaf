@@ -6,33 +6,37 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 	.post(
 		"/register",
 		async ({ body, set }) => {
-			try {
-				const result = await authServices.registerUser(
-					body.name,
-					body.username,
-					body.email,
-					body.phone,
-					body.password,
-				);
+			const result = await authServices.registerUser(
+				body.name,
+				body.username,
+				body.email,
+				body.password,
+			);
 
-				set.status = 201;
-				return result;
-			} catch (error) {
-				set.status = 500;
-
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
-			}
+			set.status = 201;
+			return {
+				status: "success",
+				message: "Registration Success",
+				data: {
+					token: result,
+				},
+			};
 		},
 		{
 			body: t.Object({
-				name: t.String({ minLength: 3 }),
-				username: t.String({ minLength: 3 }),
-				email: t.String({ format: "email" }),
-				phone: t.String({ minLength: 8 }),
-				password: t.String({ minLength: 8 }),
+				name: t.String({
+					minLength: 3,
+					error: "Nama harus memiliki minimal 3 karakter",
+				}),
+				username: t.String({
+					minLength: 3,
+					error: "Username harus memiliki minimal 3 karakter",
+				}),
+				email: t.String({ format: "email", error: "Format email tidak valid" }),
+				password: t.String({
+					minLength: 8,
+					error: "Password harus memiliki minimal 8 karakter",
+				}),
 			}),
 		},
 	)
@@ -40,59 +44,44 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 	.post(
 		"/verify",
 		async ({ body, set }) => {
-			try {
-				const result = await authServices.verifyRegistration(
-					body.token,
-					body.code,
-				);
-				set.status = 200;
-				return result;
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
-			}
+			await authServices.verifyRegistration(body.token, body.code);
+			set.status = 200;
+			return {
+				status: "success",
+				message: "Verification Success",
+			};
 		},
 		{
 			body: t.Object({
-				token: t.String(),
-				code: t.String(),
+				token: t.String({
+					minLength: 1,
+					error: "Verification Error",
+				}),
+				code: t.String({
+					minLength: 6,
+					error: "Kode harus memiliki 6 karakter",
+				}),
 			}),
 		},
 	)
 
 	.post(
 		"/login",
-		async ({ body, set, cookie: { token } }) => {
-			try {
-				const result = await authServices.loginUser(body.email, body.password);
+		async ({ body, set }) => {
+			const result = await authServices.loginUser(body.email, body.password);
 
-				token.set({
-					value: result.token,
-					httpOnly: true,
-					secure: true,
-					path: "/",
-					maxAge: 6 * 86400,
-				});
-
-				set.status = 200;
-				return result.token;
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
-			}
+			set.status = 200;
+			return {
+				status: "success",
+				message: "Registration Success",
+				data: {
+					token: result.token,
+				},
+			};
 		},
 		{
-			cookie: t.Cookie({
-				token: t.Optional(t.String()),
-			}),
 			body: t.Object({
-				email: t.String({ format: "email" }),
+				email: t.String({ format: "email", error: "Format email tidak valid" }),
 				password: t.String({ minLength: 8 }),
 			}),
 		},
@@ -101,24 +90,16 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 	.post(
 		"/logout",
 		async ({ cookie: { token }, headers, set }) => {
-			try {
-				const getToken = headers.authorization?.split(" ")[1];
+			const getToken = headers.authorization?.split(" ")[1];
 
-				if (!getToken) {
-					throw new AutorizationError("Token not provided");
-				}
-
-				set.status = 204;
-				await authServices.logout(getToken);
-
-				token.remove();
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
+			if (!getToken) {
+				throw new AutorizationError("Token not provided");
 			}
+
+			set.status = 204;
+			await authServices.logout(getToken);
+
+			token.remove();
 		},
 		{
 			cookie: t.Cookie({
@@ -130,22 +111,20 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 	.post(
 		"/forgot-password",
 		async ({ body, set }) => {
-			try {
-				const result = await authServices.forgotPassword(body.email);
+			const result = await authServices.forgotPassword(body.email);
 
-				set.status = 200;
-				return result;
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
-			}
+			set.status = 200;
+			return {
+				status: "success",
+				message: "Validation Success",
+				data: {
+					token: result,
+				},
+			};
 		},
 		{
 			body: t.Object({
-				email: t.String({ format: "email" }),
+				email: t.String({ format: "email", error: "Format email tidak valid" }),
 			}),
 		},
 	)
@@ -153,20 +132,18 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 	.post(
 		"/verify-forgot-password",
 		async ({ body, set }) => {
-			try {
-				const result = await authServices.verifyForgotPassword(
-					body.token,
-					body.code,
-				);
-				set.status = 200;
-				return result;
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
-			}
+			const result = await authServices.verifyForgotPassword(
+				body.token,
+				body.code,
+			);
+			set.status = 200;
+			return {
+				status: "success",
+				message: "Verification Success",
+				data: {
+					token: result,
+				},
+			};
 		},
 		{
 			body: t.Object({
@@ -179,25 +156,23 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 	.post(
 		"/reset-password",
 		async ({ body, set }) => {
-			try {
-				const result = await authServices.resetPassword(
-					body.token,
-					body.password,
-				);
-				set.status = 200;
-				return result;
-			} catch (error) {
-				set.status = 500;
-				if (error instanceof Error) {
-					throw new Error(error.message);
-				}
-				throw new Error("Something went wrong");
-			}
+			await authServices.resetPassword(body.token, body.password);
+			set.status = 200;
+			return {
+				status: "success",
+				message: "Reset Password Success",
+			};
 		},
 		{
 			body: t.Object({
-				token: t.String(),
-				password: t.String({ minLength: 8 }),
+				token: t.String({
+					minLength: 1,
+					error: "Verification Error",
+				}),
+				password: t.String({
+					minLength: 8,
+					error: "Password harus memiliki minimal 8 karakter",
+				}),
 			}),
 		},
 	);

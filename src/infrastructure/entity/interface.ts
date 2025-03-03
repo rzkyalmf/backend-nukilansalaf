@@ -2,7 +2,7 @@ import type { CodeOtp, Quote, User } from "@prisma/client";
 
 export type CreateUser = Pick<
 	User,
-	"name" | "username" | "email" | "phone" | "password" | "avatar"
+	"name" | "username" | "email" | "password" | "avatar"
 >;
 export type UpdateUser = Partial<User>;
 export type CreateOTP = Omit<CodeOtp, "id" | "createdAt">;

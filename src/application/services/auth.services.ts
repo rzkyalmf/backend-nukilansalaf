@@ -31,7 +31,6 @@ export class AuthServices {
 		name: string,
 		username: string,
 		email: string,
-		phone: string,
 		password: string,
 	) {
 		try {
@@ -41,7 +40,7 @@ export class AuthServices {
 				const isUserExist = await this.userRepo.findByUsername(username);
 
 				if (isUserExist && user.username !== username) {
-					throw new AutorizationError("Username already exists");
+					throw new AutorizationError("Username telah digunakan");
 				}
 
 				const hashedPassword = await Bun.password.hash(password);
@@ -49,7 +48,6 @@ export class AuthServices {
 				const updatedUser = await this.userRepo.update(user.id, {
 					name,
 					username,
-					phone,
 					password: hashedPassword,
 					avatar: "",
 				});
@@ -74,13 +72,13 @@ export class AuthServices {
 				return token;
 			}
 
-			throw new AutorizationError("Email User already exists");
+			throw new AutorizationError("Email User sudah terdaftar");
 		} catch (error) {
 			if (error instanceof NotFoundError) {
 				const isUserExist = await this.userRepo.findByUsername(username);
 
 				if (isUserExist) {
-					throw new AutorizationError("Username already exists");
+					throw new AutorizationError("Username telah digunakan");
 				}
 
 				const hashedPassword = await Bun.password.hash(password);
@@ -88,7 +86,6 @@ export class AuthServices {
 					name,
 					username,
 					email,
-					phone,
 					password: hashedPassword,
 					avatar: "",
 				});
@@ -125,16 +122,18 @@ export class AuthServices {
 			const otp = await this.OtpRepo.getOne(code);
 
 			if (otp.userId !== user.id) {
-				throw new AutorizationError("Invalid OTP code");
+				throw new AutorizationError("Kode OTP Salah");
 			}
 
 			await this.OtpRepo.delete(otp.id);
 			await this.userRepo.update(payload.id, { isVerified: true });
 
+			await this.emailServices.sendVerificationSuccessEmail(user.email);
+
 			return new UserDTO(user).fromEntity();
 		} catch (error) {
 			if (error instanceof NotFoundError) {
-				throw new AutorizationError("Invalid OTP code");
+				throw new AutorizationError("Kode OTP Salah");
 			}
 
 			if (error instanceof JWTError) {
@@ -231,7 +230,7 @@ export class AuthServices {
 
 			if (!user.isVerified) {
 				throw new AutorizationError(
-					"account not verified, check your email for verification",
+					"Akun belum terverifikasi, cek email atau daftar ulang.",
 				);
 			}
 
@@ -259,7 +258,7 @@ export class AuthServices {
 			return token;
 		} catch (error) {
 			if (error instanceof NotFoundError) {
-				throw new AutorizationError("Email not found");
+				throw new AutorizationError("Email tidak ditemukan");
 			}
 			throw error;
 		}
@@ -309,6 +308,8 @@ export class AuthServices {
 			await this.userRepo.update(user.id, {
 				password: hashedPassword,
 			});
+
+			await this.emailServices.sendPasswordResetSuccessEmail(user.email);
 
 			return new UserDTO(user).fromEntity();
 		} catch (error) {
