@@ -26,16 +26,19 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 			body: t.Object({
 				name: t.String({
 					minLength: 3,
-					error: "Nama harus memiliki minimal 3 karakter",
+					maxLength: 18,
+					error: "Nama harus memiliki minimal 3-18 karakter",
 				}),
 				username: t.String({
 					minLength: 3,
-					error: "Username harus memiliki minimal 3 karakter",
+					maxLength: 8,
+					pattern: "^[a-zA-Z0-9_\\.]+$",
+					error: "Username: 3-20 karakter (huruf, angka, _, .)",
 				}),
 				email: t.String({ format: "email", error: "Format email tidak valid" }),
 				password: t.String({
 					minLength: 8,
-					error: "Password harus memiliki minimal 8 karakter",
+					error: "Password harus memiliki minimal 6 karakter",
 				}),
 			}),
 		},
@@ -82,7 +85,10 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 		{
 			body: t.Object({
 				email: t.String({ format: "email", error: "Format email tidak valid" }),
-				password: t.String({ minLength: 8 }),
+				password: t.String({
+					minLength: 1,
+					error: "Password tidak boleh kosong",
+				}),
 			}),
 		},
 	)

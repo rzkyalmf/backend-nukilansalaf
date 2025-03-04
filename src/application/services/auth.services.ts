@@ -165,7 +165,7 @@ export class AuthServices {
 			const matchPassword = await Bun.password.verify(password, user.password);
 
 			if (!matchPassword) {
-				throw new AutorizationError("Invalid password");
+				throw new AutorizationError("Password Salah");
 			}
 
 			const token = await this.jwt.sign({
@@ -183,7 +183,7 @@ export class AuthServices {
 			};
 		} catch (error) {
 			if (error instanceof NotFoundError) {
-				throw new AutorizationError("Invalid Credentials");
+				throw new AutorizationError("Akun tidak ditemukan");
 			}
 			throw error;
 		}
