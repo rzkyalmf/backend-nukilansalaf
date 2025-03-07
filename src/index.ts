@@ -5,6 +5,7 @@ import { Elysia } from "elysia";
 
 import swagger from "@elysiajs/swagger";
 import { authRouter } from "./presentation/router/auth.router";
+import { postRouter } from "./presentation/router/post.router";
 import { quoteRouter } from "./presentation/router/quote.router";
 
 const app = new Elysia()
@@ -38,5 +39,5 @@ const app = new Elysia()
 		}),
 	)
 
-	.group("/api", (app) => app.use(authRouter).use(quoteRouter))
+	.group("/api", (app) => app.use(authRouter).use(quoteRouter).use(postRouter))
 	.listen(8001);

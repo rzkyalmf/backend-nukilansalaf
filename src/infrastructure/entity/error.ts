@@ -29,3 +29,14 @@ export class NotFoundError extends Error {
 		this.code = "NOTFOUND_ERROR"; // Error saat data tidak ada
 	}
 }
+
+export class ValidationError extends Error {
+	public status: number;
+	public code: "VALIDATION_ERROR";
+
+	constructor(message: string) {
+		super(message);
+		this.status = 400;
+		this.code = "VALIDATION_ERROR";
+	}
+}

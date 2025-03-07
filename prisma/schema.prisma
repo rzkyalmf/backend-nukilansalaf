@@ -9,6 +9,7 @@ datasource db {
 
 enum Role {
   USER
+  AUTHOR
   ADMIN
 }
 
@@ -30,7 +31,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   codeOtp CodeOtp?
-  quote Quote[]
+  quotes Quote[]
+  posts Post[]
 }
 
 model TokenBlacklist {
@@ -63,3 +65,16 @@ model Quote {
 
   createdAt DateTime @default(now())
 }
+
+model Post {
+  id String @id @default(cuid())
+  title String
+  slug String
+  content String
+  published Boolean @default(false)
+  createdAt DateTime @default(now())
+  
+  userId String
+  user User @relation(fields: [userId], references: [id])
+}
+

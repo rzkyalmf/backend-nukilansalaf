@@ -1,4 +1,4 @@
-import type { CodeOtp, Quote, User } from "@prisma/client";
+import type { CodeOtp, Post, Quote, User } from "@prisma/client";
 
 export type CreateUser = Pick<
 	User,
@@ -9,6 +9,8 @@ export type CreateOTP = Omit<CodeOtp, "id" | "createdAt">;
 export type UpdateOTP = Partial<CodeOtp>;
 export type CreateQuote = Omit<Quote, "id" | "createdAt">;
 export type UpdateQuote = Partial<Quote>;
+export type CreatePost = Omit<Post, "id" | "createdAt" | "published">;
+export type UpdatePost = Partial<Post>;
 
 export interface IUser {
 	getAll: () => Promise<User[]>;
@@ -37,5 +39,13 @@ export interface IQuote {
 	getOne: (id: string) => Promise<Quote>;
 	create: (data: CreateQuote) => Promise<Quote>;
 	update: (id: string, data: UpdateQuote) => Promise<Quote>;
+	delete: (id: string) => Promise<void>;
+}
+
+export interface IPost {
+	getAll: (userId: string) => Promise<Post[]>;
+	getOne: (id: string) => Promise<Post>;
+	create: (data: CreatePost) => Promise<Post>;
+	update: (id: string, data: UpdatePost) => Promise<Post>;
 	delete: (id: string) => Promise<void>;
 }

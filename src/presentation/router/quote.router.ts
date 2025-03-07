@@ -5,7 +5,7 @@ import { authMiddleware } from "../middleware/autorization";
 export const quoteRouter = new Elysia({ prefix: "/v1/quotes" })
 	.use(authMiddleware)
 
-	// Routes get one quotes (/api/v1/quotes/)
+	// Routes get all quotes (/api/v1/quotes/)
 	.get("/", async ({ userId, set }) => {
 		try {
 			const quotes = await quoteServices.getAll(userId);
@@ -21,7 +21,7 @@ export const quoteRouter = new Elysia({ prefix: "/v1/quotes" })
 		}
 	})
 
-	// Routes get one quotes (/api/v1/quotes/:id)
+	// Routes get one quote (/api/v1/quotes/:id)
 	.get("/:id", async ({ params, set }) => {
 		try {
 			const quote = await quoteServices.getOne(params.id);
@@ -37,7 +37,7 @@ export const quoteRouter = new Elysia({ prefix: "/v1/quotes" })
 		}
 	})
 
-	// Routes create quotes (/api/v1/quotes)
+	// Routes create quote (/api/v1/quotes)
 	.post(
 		"/",
 		async ({ body, userId, set }) => {
@@ -74,7 +74,7 @@ export const quoteRouter = new Elysia({ prefix: "/v1/quotes" })
 		},
 	)
 
-	// Routes update quotes (/api/v1/quotes/:id)
+	// Routes update quote (/api/v1/quotes/:id)
 	.patch(
 		"/:id",
 		async ({ params, body, set }) => {
@@ -110,7 +110,7 @@ export const quoteRouter = new Elysia({ prefix: "/v1/quotes" })
 		},
 	)
 
-	// Routes delete quotes (/api/v1/quotes/:id)
+	// Routes delete quote (/api/v1/quotes/:id)
 	.delete("/:id", async ({ params, set }) => {
 		try {
 			set.status = 204;
