@@ -2,7 +2,7 @@ import type { User } from "@prisma/client";
 
 export type JWTPayload = Pick<
 	User,
-	"id" | "username" | "email" | "name" | "role"
+	"id" | "role" | "isVerified" | "onBanned"
 > & {
 	type: string;
 };

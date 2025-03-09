@@ -60,10 +60,10 @@ export class AuthServices {
 
 				const token = await this.jwt.sign({
 					id: updatedUser.id,
-					username: updatedUser.username,
-					email: updatedUser.email,
-					name: updatedUser.name,
 					role: updatedUser.role,
+					isVerified: updatedUser.isVerified,
+					onBanned: updatedUser.onBanned,
+
 					type: "verify",
 				});
 
@@ -95,10 +95,10 @@ export class AuthServices {
 
 				const token = await this.jwt.sign({
 					id: newUser.id,
-					username: newUser.username,
-					email: newUser.email,
-					name: newUser.name,
 					role: newUser.role,
+					isVerified: newUser.isVerified,
+					onBanned: newUser.onBanned,
+
 					type: "register-user",
 				});
 
@@ -170,15 +170,14 @@ export class AuthServices {
 
 			const token = await this.jwt.sign({
 				id: user.id,
-				username: user.username,
-				email: user.email,
-				name: user.name,
 				role: user.role,
+				isVerified: user.isVerified,
+				onBanned: user.onBanned,
+
 				type: "login",
 			});
 
 			return {
-				user: new UserDTO(user).fromEntity(),
 				token,
 			};
 		} catch (error) {
@@ -203,7 +202,7 @@ export class AuthServices {
 				throw new AutorizationError("account is banned");
 			}
 
-			return new UserDTO(user).fromEntity();
+			return user;
 		} catch (error) {
 			if (error instanceof JWTError) {
 				throw new AutorizationError("Verification Error");
@@ -246,10 +245,10 @@ export class AuthServices {
 
 			const token = await this.jwt.sign({
 				id: user.id,
-				username: user.username,
-				email: user.email,
-				name: user.name,
 				role: user.role,
+				isVerified: user.isVerified,
+				onBanned: user.onBanned,
+
 				type: "forgot-password",
 			});
 
@@ -278,10 +277,10 @@ export class AuthServices {
 
 			const newToken = await this.jwt.sign({
 				id: user.id,
-				username: user.username,
-				email: user.email,
-				name: user.name,
 				role: user.role,
+				isVerified: user.isVerified,
+				onBanned: user.onBanned,
+
 				type: "verify-forgot-password",
 			});
 
@@ -311,7 +310,7 @@ export class AuthServices {
 
 			await this.emailServices.sendPasswordResetSuccessEmail(user.email);
 
-			return new UserDTO(user).fromEntity();
+			return;
 		} catch (error) {
 			if (error instanceof NotFoundError) {
 				throw new AutorizationError("Invalid OTP code");

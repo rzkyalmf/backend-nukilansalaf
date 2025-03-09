@@ -9,10 +9,15 @@ export class UserDTO {
 
 	fromEntity() {
 		return {
-			id: this.user.id,
 			name: this.user.name,
+			id: this.user.id,
+			username: this.user.username,
 			email: this.user.email,
+			phone: this.user.phone,
 			avatar: this.user.avatar,
+			isVerified: this.user.isVerified,
+			onBanned: this.user.onBanned,
+			role: this.user.role,
 		};
 	}
 }

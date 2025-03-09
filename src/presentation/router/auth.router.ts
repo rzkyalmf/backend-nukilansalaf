@@ -76,7 +76,7 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 			set.status = 200;
 			return {
 				status: "success",
-				message: "Registration Success",
+				message: "Login Success",
 				data: {
 					token: result.token,
 				},
@@ -92,6 +92,28 @@ export const authRouter = new Elysia({ prefix: "/v1" })
 			}),
 		},
 	)
+
+	.get("/me", async ({ headers, set }) => {
+		const token = headers.authorization?.split(" ")[1];
+
+		if (!token) {
+			throw new AutorizationError("Token not provided");
+		}
+
+		const user = await authServices.verifyAccessToken(token);
+
+		set.status = 200;
+		return {
+			status: "success",
+			message: "Token Valid",
+			data: {
+				id: user.id,
+				role: user.role,
+				isVerified: user.isVerified,
+				onBanned: user.onBanned,
+			},
+		};
+	})
 
 	.post(
 		"/logout",

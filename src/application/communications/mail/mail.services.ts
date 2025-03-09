@@ -18,10 +18,11 @@ export class EmailServices implements IEmailService {
 	async sendVerificationCode(token: string, code: string) {
 		try {
 			const payload = await this.jwt.verify(token);
+			const user = await this.userRepo.getOne(payload.id);
 
 			const { data, error } = await resend.emails.send({
 				from: "Nukilan Salaf <admission@nukilansalaf.com>",
-				to: [payload.email],
+				to: [user.email],
 				subject: "Verifikasi Akun Nukilan Salaf!",
 				html: `
           <p>Kode OTP : <b>${code}</b></p>
@@ -87,10 +88,11 @@ export class EmailServices implements IEmailService {
 	async sendForgotPasswordCode(token: string, code: string) {
 		try {
 			const payload = await this.jwt.verify(token);
+			const user = await this.userRepo.getOne(payload.id);
 
 			const { data, error } = await resend.emails.send({
 				from: "Nukilan Salaf <admission@nukilansalaf.com>",
-				to: [payload.email],
+				to: [user.email],
 				subject: "Reset Password Nukilan Salaf!",
 				html: `
           <p>Kode OTP : <b>${code}</b></p>
