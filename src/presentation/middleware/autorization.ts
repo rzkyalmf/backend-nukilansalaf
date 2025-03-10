@@ -5,7 +5,7 @@ import { AutorizationError } from "../../infrastructure/entity/error";
 export const authMiddleware = new Elysia().derive(
 	{ as: "global" },
 	async ({ headers }) => {
-		const token = headers.authorization?.split(" ")[1];
+		const token = headers.autorization?.split(" ")[1];
 
 		if (!token) {
 			throw new AutorizationError("Token not provided");
