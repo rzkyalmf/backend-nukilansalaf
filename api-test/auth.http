@@ -1,0 +1,22 @@
+@baseUrl = http://localhost:8010
+@token = eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtZThiN3p4eTAwMDBpcm9haTM3aW1lamgiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoibG9naW4iLCJleHAiOjE3NTY4MTQxNTJ9.hAUg7kQgmlvfhKfpb4bWNcjFf0F0XDVlmwOdjD8EmGU
+
+### POST Submit Tensi Measurement
+POST {{baseUrl}}/api/v1/register
+Content-Type: application/json
+
+{
+  "first_name": "Alam",
+  "last_name": "Salaf",
+  "email": "sketsacartoon@gmail.com",
+  "password": "12345678"
+}
+
+### POST login
+POST {{baseUrl}}/api/v1/login
+Content-Type: application/json
+
+{
+  "email": "sketsacartoon@gmail.com",
+  "password": "12345678"
+}

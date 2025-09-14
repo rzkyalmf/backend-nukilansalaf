@@ -9,21 +9,44 @@ datasource db {
 
 enum Role {
   USER
-  AUTHOR
+  USER_PREMIUM
+  CONTRIBUTOR
   ADMIN
+}
+
+enum CategoryType {
+  ALQURAN
+  TAFSIR
+  HADIST
+  FIQIH
+  AQIDAH
+  IBADAH
+  MUAMALAH
+  AKHLAK_ADAB
+  SIRAH
+  FATWA
+  NASIHAT
+  DOA_DZIKIR
+  KELUARGA
+  THIBBUN_NABAWI
+  KESEHATAN
+  MANHAJ
+  BAHASA_ARAB
 }
 
 model User {
   id String @id @default(cuid())
 
-  name String
+  first_name String
+  last_name String
   username String @unique
   email String @unique
-  phone String?
   password String
   avatar String?
   isVerified Boolean @default(false)
   onBanned Boolean @default(false)
+  totalViews Int @default(0)
+  totalUniqueViews Int @default(0)
 
   role Role @default(USER)
 
@@ -31,15 +54,19 @@ model User {
   updatedAt DateTime @updatedAt
 
   codeOtp CodeOtp?
-  quotes Quote[]
-  posts Post[]
+  articles Article[]
+  sections Section[]
+  advertisements Advertisement[]
+  viewLogs ViewLog[]
 }
 
 model TokenBlacklist {
   id String   @id @default(cuid())
   token String   @unique
   expiredAt DateTime
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CodeOtp {
@@ -50,31 +77,78 @@ model CodeOtp {
   user User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Quote {
+model Section {
   id String @id @default(cuid())
+  index Int @default(0)
   title String
-  speaker String
-  content String
-  source String
-  description String
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  slug String @unique
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  contributorId String
+  contributor User @relation(fields: [contributorId], references: [id])
+  
+  articles Article[]
 }
 
-model Post {
+model ViewLog {
+  id String @id @default(cuid())
+  ipAddress String
+  userAgent String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  articleId String
+  article Article @relation(fields: [articleId], references: [id])
+  
+  userId String?
+  user User? @relation(fields: [userId], references: [id])
+  
+  @@index([articleId, createdAt])
+  @@index([userId, createdAt])
+}
+
+model Advertisement {
   id String @id @default(cuid())
   title String
-  slug String
+  imageUrl String
+  linkUrl String
+  isActive Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  contributorId String
+  contributor User @relation(fields: [contributorId], references: [id])
+  
+  articles Article[]
+}
+
+model Article {
+  id String @id @default(cuid())
+  title String
+  slug String @unique
+  category CategoryType
   content String
   published Boolean @default(false)
+  viewCount Int @default(0)
+  uniqueViewCount Int @default(0)
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   
   userId String
   user User @relation(fields: [userId], references: [id])
+  
+  sectionId String?
+  section Section? @relation(fields: [sectionId], references: [id])
+  
+  advertisements Advertisement[]
+  viewLogs ViewLog[]
 }
 

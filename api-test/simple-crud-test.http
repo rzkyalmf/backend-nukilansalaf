@@ -1,0 +1,142 @@
+### Variables
+@baseUrl = http://localhost:8010
+@adminToken = Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6ImNtZmphaWxqdjAwMDBpcm0wOThtbDB5ZHkiLCJyb2xlIjoiQURNSU4iLCJ0eXBlIjoibG9naW4iLCJleHAiOjE3NTg0MzQ4MDB9.ZE-uBgRzQdjMZje1NLDKMJMFHZg_JjGc_z3GJvWPk3w
+
+# Replace these IDs with actual IDs from your database after creating records
+@sectionId = cmfjb5i9x0001irm07x7h9sw4
+@articleId = cmfjbdeca0003irm06t7mbb23
+@advertisementId = cmfjbho9t000dirm0zfdc0m1o
+
+### ========== SECTION CRUD ==========
+
+### GET All Sections (Protected)
+GET {{baseUrl}}/api/v1/sections
+Authorization: {{adminToken}}
+
+### POST Create Section
+POST {{baseUrl}}/api/v1/sections
+Content-Type: application/json
+Authorization: {{adminToken}}
+
+{
+  "title": "Test Section",
+  "slug": "test-section",
+  "index": 1,
+  "articleIds": ["cmfjbdklb0005irm0orpp9462"]
+}
+
+### GET One Section
+GET {{baseUrl}}/api/v1/sections/{{sectionId}}
+Authorization: {{adminToken}}
+
+### PATCH Update Section
+PATCH {{baseUrl}}/api/v1/sections/{{sectionId}}
+Content-Type: application/json
+Authorization: {{adminToken}}
+
+{
+  "title": "Updated Test Section",
+  "index": 2,
+  "articleIds": ["cmfjbdklb0005irm0orpp9462"]
+}
+
+### DELETE Section
+DELETE {{baseUrl}}/api/v1/sections/{{sectionId}}
+Authorization: {{adminToken}}
+
+### ========== ARTICLE CRUD ==========
+
+### GET All Articles (Protected)
+GET {{baseUrl}}/api/v1/articles
+Authorization: {{adminToken}}
+
+### POST Create Article
+POST {{baseUrl}}/api/v1/articles
+Content-Type: application/json
+Authorization: {{adminToken}}
+
+{
+  "title": "Test Article",
+  "category": "ALQURAN",
+  "content": "This is a test article content with sufficient length for validation.",
+  "published": true
+}
+
+### GET One Article
+GET {{baseUrl}}/api/v1/articles/{{articleId}}
+Authorization: {{adminToken}}
+
+### PATCH Update Article
+PATCH {{baseUrl}}/api/v1/articles/{{articleId}}
+Content-Type: application/json
+Authorization: {{adminToken}}
+
+{
+  "title": "Updated Test Article",
+  "content": "This is updated article content with sufficient length for validation.",
+  "published": false
+}
+
+### DELETE Article
+DELETE {{baseUrl}}/api/v1/articles/{{articleId}}
+Authorization: {{adminToken}}
+
+### ========== ADVERTISEMENT CRUD ==========
+
+### GET All Advertisements (Protected)
+GET {{baseUrl}}/api/v1/advertisements
+Authorization: {{adminToken}}
+
+### POST Create Advertisement
+POST {{baseUrl}}/api/v1/advertisements
+Content-Type: application/json
+Authorization: {{adminToken}}
+
+{
+  "title": "Test Advertisement",
+  "imageUrl": "https://example.com/image.jpg",
+  "linkUrl": "https://example.com",
+  "isActive": true,
+  "articleIds": ["cmfjbdeca0003irm06t7mbb23"]
+}
+
+### GET One Advertisement
+GET {{baseUrl}}/api/v1/advertisements/{{advertisementId}}
+Authorization: {{adminToken}}
+
+### PATCH Update Advertisement
+PATCH {{baseUrl}}/api/v1/advertisements/{{advertisementId}}
+Content-Type: application/json
+Authorization: {{adminToken}}
+
+{
+  "title": "Updated Test Advertisement",
+  "imageUrl": "https://example.com/updated-image.jpg",
+  "linkUrl": "https://example.com/updated",
+  "isActive": false,
+  "articleIds": []
+}
+
+### DELETE Advertisement
+DELETE {{baseUrl}}/api/v1/advertisements/{{advertisementId}}
+Authorization: {{adminToken}}
+
+### ========== PUBLIC ROUTES (No Auth Required) ==========
+
+### GET All Articles (Public)
+GET {{baseUrl}}/api/v1/public/articles
+
+### GET One Article (Public)
+GET {{baseUrl}}/api/v1/public/articles/{{articleId}}
+
+### GET All Sections (Public)
+GET {{baseUrl}}/api/v1/public/sections
+
+### GET One Section (Public)
+GET {{baseUrl}}/api/v1/public/sections/{{sectionId}}
+
+### GET All Active Advertisements (Public)
+GET {{baseUrl}}/api/v1/public/advertisements
+
+### GET One Advertisement (Public)
+GET {{baseUrl}}/api/v1/public/advertisements/{{advertisementId}}
