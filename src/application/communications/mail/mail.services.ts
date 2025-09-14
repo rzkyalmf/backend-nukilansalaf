@@ -8,45 +8,45 @@ import type { IEmailService } from "./interfaces/email.interface";
 
 @injectable()
 export class EmailServices implements IEmailService {
-  constructor(
-    @inject(TYPES.userRepo) private userRepo: IUser,
-    @inject(TYPES.jwt) private jwt: IJWT
-  ) {}
+	constructor(
+		@inject(TYPES.userRepo) private userRepo: IUser,
+		@inject(TYPES.jwt) private jwt: IJWT,
+	) {}
 
-  async sendVerificationCode(token: string, code: string) {
-    try {
-      const payload = await this.jwt.verify(token);
-      const user = await this.userRepo.getOne(payload.id);
+	async sendVerificationCode(token: string, code: string) {
+		try {
+			const payload = await this.jwt.verify(token);
+			const user = await this.userRepo.getOne(payload.id);
 
-      const { data, error } = await resend.emails.send({
-        from: "Nukilan Salaf <admission@nukilansalaf.com>",
-        to: [user.email],
-        subject: "Verifikasi Akun Nukilan Salaf!",
-        html: `
+			const { data, error } = await resend.emails.send({
+				from: "Nukilan Salaf <admission@nukilansalaf.com>",
+				to: [user.email],
+				subject: "Verifikasi Akun Nukilan Salaf!",
+				html: `
           <p>Kode OTP : <b>${code}</b></p>
           <p>Link Verifikasi Akun : <a href="https://nukilansalaf.com/verify?token=${token}">Klik Disini!</a></p>
         `,
-      });
+			});
 
-      if (error) {
-        console.error("Resend error:", error);
-        throw new EmailError("Gagal mengirim email");
-      }
+			if (error) {
+				console.error("Resend error:", error);
+				throw new EmailError("Gagal mengirim email");
+			}
 
-      return;
-    } catch (error) {
-      console.error("Email error:", error);
-      throw new EmailError("Terjadi kesalahan saat mengirim email");
-    }
-  }
+			return;
+		} catch (error) {
+			console.error("Email error:", error);
+			throw new EmailError("Terjadi kesalahan saat mengirim email");
+		}
+	}
 
-  async sendVerificationSuccessEmail(email: string) {
-    try {
-      const { data, error } = await resend.emails.send({
-        from: "Nukilan Salaf <admission@nukilansalaf.com>",
-        to: [email],
-        subject: "Selamat Datang di Nukilan Salaf!",
-        html: `
+	async sendVerificationSuccessEmail(email: string) {
+		try {
+			const { data, error } = await resend.emails.send({
+				from: "Nukilan Salaf <admission@nukilansalaf.com>",
+				to: [email],
+				subject: "Selamat Datang di Nukilan Salaf!",
+				html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
             <h1 style="color: #4a5568;">Akun Anda Berhasil Dibuat!</h1>
@@ -70,53 +70,53 @@ export class EmailServices implements IEmailService {
           </div>
         </div>
       `,
-      });
+			});
 
-      if (error) {
-        console.error("Resend error:", error);
-        throw new EmailError("Gagal mengirim email konfirmasi");
-      }
-      return;
-    } catch (error) {
-      console.error("Email error:", error);
-      throw new EmailError("Terjadi kesalahan saat mengirim email konfirmasi");
-    }
-  }
+			if (error) {
+				console.error("Resend error:", error);
+				throw new EmailError("Gagal mengirim email konfirmasi");
+			}
+			return;
+		} catch (error) {
+			console.error("Email error:", error);
+			throw new EmailError("Terjadi kesalahan saat mengirim email konfirmasi");
+		}
+	}
 
-  async sendForgotPasswordCode(token: string, code: string) {
-    try {
-      const payload = await this.jwt.verify(token);
-      const user = await this.userRepo.getOne(payload.id);
+	async sendForgotPasswordCode(token: string, code: string) {
+		try {
+			const payload = await this.jwt.verify(token);
+			const user = await this.userRepo.getOne(payload.id);
 
-      const { data, error } = await resend.emails.send({
-        from: "Nukilan Salaf <admission@nukilansalaf.com>",
-        to: [user.email],
-        subject: "Reset Password Nukilan Salaf!",
-        html: `
+			const { data, error } = await resend.emails.send({
+				from: "Nukilan Salaf <admission@nukilansalaf.com>",
+				to: [user.email],
+				subject: "Reset Password Nukilan Salaf!",
+				html: `
           <p>Kode OTP : <b>${code}</b></p>
           <p>Link Reset Password : <a href="https://nukilansalaf.com/reset-password/verify?token=${token}">Klik Disini!</a></p>
         `,
-      });
+			});
 
-      if (error) {
-        console.error("Resend error:", error);
-        throw new EmailError("Gagal mengirim email");
-      }
+			if (error) {
+				console.error("Resend error:", error);
+				throw new EmailError("Gagal mengirim email");
+			}
 
-      return;
-    } catch (error) {
-      console.error("Email error:", error);
-      throw new EmailError("Terjadi kesalahan saat mengirim email");
-    }
-  }
+			return;
+		} catch (error) {
+			console.error("Email error:", error);
+			throw new EmailError("Terjadi kesalahan saat mengirim email");
+		}
+	}
 
-  async sendPasswordResetSuccessEmail(email: string) {
-    try {
-      const { data, error } = await resend.emails.send({
-        from: "Nukilan Salaf <admission@nukilansalaf.com>",
-        to: [email],
-        subject: "Password Anda Berhasil Diubah - Nukilan Salaf",
-        html: `
+	async sendPasswordResetSuccessEmail(email: string) {
+		try {
+			const { data, error } = await resend.emails.send({
+				from: "Nukilan Salaf <admission@nukilansalaf.com>",
+				to: [email],
+				subject: "Password Anda Berhasil Diubah - Nukilan Salaf",
+				html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
           <div style="text-align: center; margin-bottom: 20px;">
             <h1 style="color: #4a5568;">Password Berhasil Diubah</h1>
@@ -142,18 +142,18 @@ export class EmailServices implements IEmailService {
           </div>
         </div>
       `,
-      });
+			});
 
-      if (error) {
-        console.error("Resend error:", error);
-        throw new EmailError("Gagal mengirim email konfirmasi reset password");
-      }
-      return;
-    } catch (error) {
-      console.error("Email error:", error);
-      throw new EmailError(
-        "Terjadi kesalahan saat mengirim email konfirmasi reset password"
-      );
-    }
-  }
+			if (error) {
+				console.error("Resend error:", error);
+				throw new EmailError("Gagal mengirim email konfirmasi reset password");
+			}
+			return;
+		} catch (error) {
+			console.error("Email error:", error);
+			throw new EmailError(
+				"Terjadi kesalahan saat mengirim email konfirmasi reset password",
+			);
+		}
+	}
 }

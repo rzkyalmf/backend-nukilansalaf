@@ -4,6 +4,6 @@ import { articlesRouter } from "./articles/articles.router";
 import { sectionsRouter } from "./sections/sections.router";
 
 export const protectedRouter = new Elysia({ prefix: "/v1" })
-  .use(articlesRouter)
-  .use(sectionsRouter)
-  .use(advertisementsRouter);
+	.use(articlesRouter)
+	.use(sectionsRouter)
+	.use(advertisementsRouter);

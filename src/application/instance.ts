@@ -36,4 +36,6 @@ container.bind(AdvertisementServices).toSelf();
 export const authServices = container.get<AuthServices>(AuthServices);
 export const articleServices = container.get<ArticleServices>(ArticleServices);
 export const sectionServices = container.get<SectionServices>(SectionServices);
-export const advertisementServices = container.get<AdvertisementServices>(AdvertisementServices);
+export const advertisementServices = container.get<AdvertisementServices>(
+	AdvertisementServices,
+);
